@@ -10,16 +10,16 @@
             content:''
         },
         messages: [
-            // {
-            //     id: 1,
-            //     by: 'user',
-            //     content: "Hola mundo"
-            // },
-            // {
-            //     id: 2,
-            //     by: 'gpt',
-            //     content: 'Helo'
-            // }
+            {
+                id: 1,
+                by: 'user',
+                content: "Hola mundo"
+            },
+            {
+                id: 2,
+                by: 'gpt',
+                content: 'Helo'
+            }
         ]
     });
 
@@ -62,8 +62,14 @@
             </div>
             <div class="container-chat">
                 <div v-for="message in data.messages" :key="message.id">
-                    <div>
+                    <div v-if="message.by == 'user' " class="message-by-user">
                         {{ message.content }}
+                    </div>
+                    <div v-else class="message-by-gpt">
+
+                        <div class="message-text-gpt">
+                            {{ message.content }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -244,5 +250,34 @@
         font-size: 8;
         color: #797a87;
         width: 100%;
+    }
+
+    .message-by-gpt
+    {
+        position: relative;
+        z-index: 30;
+        top: 100px;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        background: #444654;
+    }
+
+    .message-text-gpt
+    {
+        z-index: 30;
+        position: relative;
+        left: 380px;
+        color: wheat;
+    }
+
+    .message-by-user
+    {
+        position: relative;
+        z-index: 30;
+        top: 100px;
+        left: 380px;
+        color: wheat;
+        padding: 20px;
     }
 </style>
