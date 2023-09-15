@@ -6,6 +6,7 @@ use App\Contracts\IMessageRepository;
 use App\Models\{ Message, User };
 use \Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class MessageRepository implements IMessageRepository
 {
@@ -67,7 +68,37 @@ class MessageRepository implements IMessageRepository
      */
     public function store(Request $request): Message
     {
-        return $this->message->create($request->all());
+        $message = $this->message->create($request->all());
+
+        $response = Http::withHeaders([
+            'content-type' => 'application/json',
+            'authorization' => 'Bearer '. env('GPT_KEY')
+        ])
+        ->post('https://api.openai.com/v1/chat/completions',[
+            'model'=>'gpt-3.5-turbo',
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $message->content
+                ]
+            ],
+            'temperature'=> 0.7
+        ]);
+
+        $result = $response->json();
+
+        if(key_exists('error', $result))
+            return $this->message->create([
+                'user_id' => $request->user()->id,
+                'assistent'=> true,
+                'content' => $result['error']['message']
+            ]);
+
+        return $this->message->create([
+            'user_id' => $request->user()->id,
+            'assistent'=> true,
+            'content' => $result['choices'][0]['content']
+        ]);
     }
 
     /**

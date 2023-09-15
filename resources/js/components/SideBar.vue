@@ -1,25 +1,10 @@
 <script setup>
 import { reactive, defineProps } from 'vue';
 
+import ChatGptContainer from './ChatGptContainer.vue';
+
 const data = reactive({
-    chats: [
-        {
-            id:1,
-            subscribe: "Test Chat Example"
-        },
-        {
-            id:2,
-            subscribe: "Test Chat Example"
-        },
-        {
-            id:3,
-            subscribe: "Test Chat Example"
-        },
-        {
-            id:4,
-            subscribe: "Test Chat Example"
-        },
-    ],
+    chats: [],
     user: null
 });
 
@@ -31,12 +16,28 @@ data.user = props.user;
 
 </script>
 <template>
+
+    <div class="btn-open-side-bar">
+        <div class="close-side-bar">
+            <i class="material-icons">
+                crop_square
+            </i>
+        </div>
+    </div>
+
     <div class="side-bar-container">
-        <div class="add-chat row">
-            <i class="material-icons col-sm-2 col-md-2 col-lg-2">add</i>
-            <span class="col-sm-6 col-md-6  col-lg-6">
-                New Chat
-            </span>
+        <div class="tools-side-bar">
+            <div class="add-chat">
+                <i class="material-icons col-sm-2 col-md-2 col-lg-2">add</i>
+                <span class="col-sm-9 col-md-9 col-lg-9">
+                    New Chat
+                </span>
+            </div>
+            <div class="close-side-bar">
+                <i class="material-icons">
+                    crop_square
+                </i>
+            </div>
         </div>
         <div class="chat-item" v-for="chat in data.chats" :key="chat.id">
             {{ chat.subscribe }}
@@ -53,10 +54,11 @@ data.user = props.user;
                         ...
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <ChatGptContainer :user="props?.user"/>
 </template>
 <style>
     .footer-sidebar
@@ -71,10 +73,12 @@ data.user = props.user;
     {
         padding-top: 0;
         margin-top: 0;
-        margin: 4px;
-        padding: 8px;
+        padding: 12px;
         border: solid 1px #d2e9d638;
         border-radius: 5px;
+        display: grid;
+        margin-right: 4px;
+        grid-template-columns: 40px 100px;
     }
 
     .add-chat:hover
@@ -85,6 +89,7 @@ data.user = props.user;
 
     .side-bar-container
     {
+        transition: all 0.3s;
         z-index: 100;
         position: absolute;
         left: 0;
@@ -137,5 +142,28 @@ data.user = props.user;
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
         background: #202123;
+    }
+
+    .tools-side-bar
+    {
+        display: grid;
+        grid-template-columns: 180px 45px;
+    }
+
+    .close-side-bar
+    {
+        border: solid 1px #343541;
+        border-radius: 5px;
+        padding: 9px;
+    }
+
+    .close-side-bar:hover
+    {
+        background: #343541;
+    }
+
+    .btn-open-side-bar
+    {
+        display: none;
     }
 </style>

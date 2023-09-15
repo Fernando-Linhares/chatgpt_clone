@@ -9,7 +9,7 @@ class Message extends Model
 {
     use HasFactory;
 
-    public $fillable = ['user_id', 'content'];
+    public $fillable = ['user_id', 'content', 'assistent'];
 
     /**
      * - Should return a instance of user
@@ -18,6 +18,6 @@ class Message extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id', 'user_id');
     }
 }

@@ -41,6 +41,7 @@ Route::get('/session-user', function(Request $request) {
     $user = $request->user();
 
     return [
+        'id'=> $user->id,
         'name' => $user->name,
         'email' => $user->email,
         'token' => session('session_token')

@@ -1,6 +1,11 @@
 <script setup>
 
-    import { reactive } from 'vue';
+    import { reactive, defineProps } from 'vue';
+    import MessageGpt from './MessageGpt.vue';
+
+    const props = defineProps({
+        user: Object
+    });
 
     const data = reactive({
         sendButton: {
@@ -9,19 +14,11 @@
         input:{
             content:''
         },
-        messages: [
-            {
-                id: 1,
-                by: 'user',
-                content: "Hola mundo"
-            },
-            {
-                id: 2,
-                by: 'gpt',
-                content: 'Helo'
-            }
-        ]
+        messages: [],
+        user: null
     });
+
+    data.user = props.user;
 
     const handleMessageByInput = event => {
         data.sendButton.active = event.target.value.length > 0;
@@ -30,16 +27,37 @@
             sendMessage(event.target.value);
     };
 
-    const handleMessageByButton = event => {
-        sendMessage(data.input.content);
-    };
+    const handleMessageByButton = event => sendMessage(data.input.content);
 
     const sendMessage = async content => {
-        // data.messages.push({
-        //     id: 1,
-        //     by: user,
-        //     content: content
-        // })
+
+        data.messages.push({
+            id: 1,
+            by: 'user',
+            content: content
+        });
+
+        console.log(data.user)
+
+        let response = await axios.post(
+            window.location.origin + '/api/messages',
+            {
+                content: content,
+                user_id: props?.user?.id,
+                assistent: false
+            },
+            {
+                headers: {  Authorization: 'Bearer ' + props?.user?.token }
+            }
+        );
+
+        data.messages.push({
+            id: 1,
+            by: 'gpt',
+            content: response.data.content
+        });
+
+        data.input  = '';
     };
 
     const mouseIn = event => event.target.classList.add('card-helper-hover');
@@ -66,14 +84,12 @@
                         {{ message.content }}
                     </div>
                     <div v-else class="message-by-gpt">
-
                         <div class="message-text-gpt">
-                            {{ message.content }}
+                            <MessageGpt :content="message.content"/>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
         <div v-else>
             <div class="logo">ChatGPT</div>
@@ -280,4 +296,5 @@
         color: wheat;
         padding: 20px;
     }
+
 </style>
